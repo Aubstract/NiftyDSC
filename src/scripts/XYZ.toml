@@ -1,0 +1,38 @@
+# Guidelines:
+#
+# - The filename should match the catalog moniker,
+#   for example "NGC.toml" or "M.toml"
+#
+# - The catalog moniker should only be 3 (or fewer) characters,
+#   anything beyond will not be counted.
+#
+# - Catalog sub-table names (such as [catalog.1]) should use
+#   an integer > 0. You CAN skip numbers
+#
+# - The extra whitespace around the ra and dec coords is purely for readibility,
+#   you can remove it if you'd like
+#
+# - You must include a "-" in front of a negative dec degree value,
+#   but including a "+" in front of a positive value is optional
+#
+
+[catalog]
+moniker = "XYZ"
+
+[catalog.1]
+ra  = " 12 44 30"       # optional whitespace before "=" and "12" so things line up
+dec = "-22 23 41"
+
+[catalog.2]
+ra  = " 22 51 35"
+dec = "+34 55 12"       # optional "+"
+
+# Implicit creation of catalog.3 and catalog.4
+
+[catalog.5]             # skip to object 5
+ra  = " 23 01 09"
+dec = " 07 35 56"       # interpreted as "+07"
+
+[catalog.6]
+ra  = " 19 44 10"
+dec = " 02 04 33"       # optional leading zeros on "02" and "04"
