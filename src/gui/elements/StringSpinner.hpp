@@ -4,9 +4,9 @@
 #ifndef NIFTYDSC_STRINGSPINNER_HPP
 #define NIFTYDSC_STRINGSPINNER_HPP
 
-#include <vector>
-#include <string>
 #include "Spinner.hpp"
+#include <string>
+#include <vector>
 
 class StringSpinner : public Spinner
 {
@@ -15,23 +15,23 @@ private:
     uint8_t                  char_size_multiplier;
     bool                     wrap_text;
 
-    void drawValue(uint16_t color, uint16_t background_color);
+    void drawValue(uint16_t color, uint16_t background_color) override;
 
 public:
     void init(Adafruit_GFX*            _display,
               int16_t                  _x,
               int16_t                  _y,
+              int16_t                  _w,
+              int16_t                  _h,
+              const uint8_t*           _select_icon,
+              uint16_t                 _select_color,
               uint16_t                 _default_color,
               uint16_t                 _background_color,
-              uint16_t                 _select_color,
-              const uint8_t*           _select_icon,
-              int16_t                  _select_icon_w,
-              int16_t                  _select_icon_h,
+              int16_t                  _value_x_offset,
+              int16_t                  _value_y_offset,
               std::vector<std::string> _string_value_list,
               uint8_t                  _char_size_multiplier,
-              bool                     _wrap_text,
-              int16_t                  _value_x_offset,
-              int16_t                  _value_y_offset);
+              bool                     _wrap_text);
 };
 
 #endif  // NIFTYDSC_STRINGSPINNER_HPP

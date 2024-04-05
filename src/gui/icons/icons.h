@@ -5,8 +5,8 @@
 #ifndef NIFTYDSC_ICONS_H
 #define NIFTYDSC_ICONS_H
 
-#include <cstdint>
 #include <Arduino.h>
+#include <cstdint>
 
 const unsigned char cat_sel_icon[] PROGMEM = {
     // ' cat_sel_icon, 72x24px

@@ -41,9 +41,7 @@ NamespaceIndentation: None
 ObjCBlockIndentWidth: '4'
 ObjCSpaceAfterProperty: 'false'
 ObjCSpaceBeforeProtocolList: 'false'
-
 PointerAlignment: Left
-
 ReflowComments: 'true'
 SortIncludes: 'false'
 SpaceAfterCStyleCast: 'true'

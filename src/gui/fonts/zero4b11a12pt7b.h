@@ -1,6 +1,7 @@
 #ifndef NIFTYDSC_ZERO4B11A_H
 #define NIFTYDSC_ZERO4B11A_H
 
+#include <Adafruit_GFX.h>
 #include <Arduino.h>
 #include <cstdint>
 
