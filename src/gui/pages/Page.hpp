@@ -5,6 +5,7 @@
 #ifndef NIFTYDSC_PAGE_H
 #define NIFTYDSC_PAGE_H
 
+#include "gui/elements/UIElement.hpp"
 #include <Adafruit_GFX.h>
 #include <cstdint>
 #include <vector>
@@ -23,16 +24,33 @@ protected:
     const uint8_t*              page_icon;
     std::vector<const uint8_t*> button_icons;
     uint8_t                     select_index;
-    bool                        inScope;
-    bool                        returnScopeToParent;
+    std::vector<UIElement*>     elements;
+    bool                        in_scope;
+    bool                        return_scope_to_parent;
 
     virtual void drawElements() = 0;
 
 public:
+    Page();
+    void init(Adafruit_GFX*               _display,
+              int16_t                     _x,
+              int16_t                     _y,
+              int16_t                     _page_w,
+              int16_t                     _page_h,
+              uint16_t                    _default_color,
+              uint16_t                    _background_color,
+              uint16_t                    _select_color,
+              const uint8_t*              _page_icon,
+              std::vector<const uint8_t*> _button_icons,
+              std::vector<UIElement*>     _elements);
+
     void draw();
 
-    void incSelIndex();
-    void decSelIndex();
+    virtual void handleUserInput(std::vector<bool>) = 0;
+    void         setScope();
+
+    virtual void decSelectIndex() = 0;
+    virtual void incSelectIndex() = 0;
 };
 
 #endif  // NIFTYDSC_PAGE_H

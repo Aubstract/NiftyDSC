@@ -5,6 +5,7 @@
 #ifndef NIFTYDSC_PACKEDRADEC_HPP
 #define NIFTYDSC_PACKEDRADEC_HPP
 
+#include <string>
 #include <cassert>
 #include <cstdint>
 

@@ -36,9 +36,10 @@ public:
               uint16_t       _default_color,
               uint16_t       _background_color);
 
-    void draw();
-    void select();
-    void deselect();
+    void         draw();
+    void         select();
+    void         deselect();
+    virtual void interact() = 0;
 
     bool    isSelected() const;
     int16_t getWidth() const;

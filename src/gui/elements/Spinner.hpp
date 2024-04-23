@@ -35,6 +35,8 @@ public:
     void increment();
     void decrement();
 
+    void interact() override;
+
     uint8_t getIndex() const;
     void    setIndex(uint8_t _index);
 };

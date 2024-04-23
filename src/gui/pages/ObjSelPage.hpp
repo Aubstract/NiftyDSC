@@ -9,17 +9,34 @@
 #include "gui/elements/CharSpinner.hpp"
 #include "gui/elements/StringSpinner.hpp"
 #include "gui/elements/Spinner.hpp"
+#include "gui/GUIConstants.hpp"
+#include "gui/icons/icons.h"
+#include "catalogs/catalog_list.hpp"
 #include <vector>
+#include <string>
 
 class ObjSelPage : public Page
 {
 private:
-    std::vector<Spinner*> elements;
-
     void drawElements() override;
 
 public:
     ObjSelPage();
+
+    void init(Adafruit_GFX*               _display,
+              int16_t                     _x,
+              int16_t                     _y,
+              int16_t                     _page_w,
+              int16_t                     _page_h,
+              uint16_t                    _default_color,
+              uint16_t                    _background_color,
+              uint16_t                    _select_color,
+              const uint8_t*              _page_icon,
+              std::vector<const uint8_t*> _button_icons);
+
+    void handleUserInput(std::vector<bool>) override;
+    void incSelectIndex() override;
+    void decSelectIndex() override;
 
     uint8_t  getCatName();
     uint16_t getCatNum();

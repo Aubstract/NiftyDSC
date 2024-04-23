@@ -41,6 +41,11 @@ void Spinner::decrement()
     this->draw();
 }
 
+void Spinner::interact()
+{
+    this->increment();
+}
+
 uint8_t Spinner::getIndex() const
 {
     return index;
