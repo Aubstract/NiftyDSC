@@ -28,8 +28,6 @@ protected:
     bool                        in_scope;
     bool                        return_scope_to_parent;
 
-    virtual void drawElements() = 0;
-
 public:
     Page();
     void init(Adafruit_GFX*               _display,
@@ -44,7 +42,7 @@ public:
               std::vector<const uint8_t*> _button_icons,
               std::vector<UIElement*>     _elements);
 
-    void draw();
+    virtual void draw() = 0;
 
     virtual void handleUserInput(std::vector<bool>) = 0;
     void         setScope();

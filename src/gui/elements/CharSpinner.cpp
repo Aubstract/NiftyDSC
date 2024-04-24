@@ -34,7 +34,7 @@ void CharSpinner::init(Adafruit_GFX*     _display,
     char_size_multiplier = _char_size_multiplier;
 }
 
-void CharSpinner::drawValue(uint16_t color, uint16_t background_color)
+void CharSpinner::drawValue(uint16_t color)
 {
     display->drawChar(x + value_x_offset,
                       y + value_y_offset,
@@ -42,4 +42,19 @@ void CharSpinner::drawValue(uint16_t color, uint16_t background_color)
                       color,
                       background_color,
                       char_size_multiplier);
+}
+
+void CharSpinner::draw()
+{
+    if (selected)
+    {
+        display->fillRect(x, y, w, h, background_color);
+        drawValue(select_color);
+        display->drawBitmap(x, y, select_icon, w, h, default_color);
+    }
+    else
+    {
+        display->fillRect(x, y, w, h, background_color);
+        drawValue(default_color);
+    }
 }

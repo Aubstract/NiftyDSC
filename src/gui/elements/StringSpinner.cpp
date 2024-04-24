@@ -36,11 +36,29 @@ void StringSpinner::init(Adafruit_GFX*            _display,
     wrap_text            = _wrap_text;
 }
 
-void StringSpinner::drawValue(uint16_t color, uint16_t background_color)
+void StringSpinner::drawValue(uint16_t color)
 {
     display->setCursor(x + value_x_offset, y + value_y_offset);
     display->setTextColor(color, background_color);
     display->setTextSize(char_size_multiplier);
     display->setTextWrap(wrap_text);
     display->println(string_value_list[index].c_str());
+}
+
+void StringSpinner::draw()
+{
+    Serial.println("Drawing StringSpinner");
+    if (selected)
+    {
+        Serial.println("Selected");
+        display->fillRect(x, y, w, h, background_color);
+        drawValue(select_color);
+        display->drawBitmap(x, y, select_icon, w, h, default_color);
+    }
+    else
+    {
+        Serial.println("Not selected");
+        display->fillRect(x, y, w, h, background_color);
+        drawValue(default_color);
+    }
 }

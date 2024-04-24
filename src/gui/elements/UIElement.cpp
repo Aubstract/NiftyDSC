@@ -29,21 +29,6 @@ void UIElement::init(Adafruit_GFX*  _display,
     background_color = _background_color;
 }
 
-void UIElement::draw()
-{
-    if (selected)
-    {
-        display->fillRect(x, y, w, h, background_color);
-        drawValue(select_color, background_color);
-        display->drawBitmap(x, y, select_icon, w, h, default_color);
-    }
-    else
-    {
-        display->fillRect(x, y, w, h, background_color);
-        drawValue(default_color, background_color);
-    }
-}
-
 void UIElement::select()
 {
     selected = true;
@@ -59,6 +44,11 @@ void UIElement::deselect()
 bool UIElement::isSelected() const
 {
     return selected;
+}
+
+UIType UIElement::getType() const
+{
+    return type;
 }
 
 int16_t UIElement::getWidth() const

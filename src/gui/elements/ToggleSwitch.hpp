@@ -14,7 +14,7 @@ private:
     const uint8_t* on_icon;
     const uint8_t* off_icon;
 
-    void drawValue(uint16_t color, uint16_t background_color) override;
+    void drawValue(uint16_t color);
 
 public:
     ToggleSwitch();
@@ -29,6 +29,8 @@ public:
               uint16_t       _background_color,
               const uint8_t* _on_icon,
               const uint8_t* _off_icon);
+
+    void draw() override;
 
     void setOn();
     void setOff();

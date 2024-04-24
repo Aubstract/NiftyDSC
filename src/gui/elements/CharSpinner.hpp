@@ -13,8 +13,7 @@ class CharSpinner : public Spinner
 private:
     std::vector<char> char_value_list;
     uint8_t           char_size_multiplier;
-
-    void drawValue(uint16_t color, uint16_t background_color) override;
+    void              drawValue(uint16_t);
 
 public:
     void init(Adafruit_GFX*     _display,
@@ -30,6 +29,7 @@ public:
               int16_t           _value_y_offset,
               std::vector<char> _char_value_list,
               uint8_t           _char_size_multiplier);
+    void draw() override;
 };
 
 #endif  // NIFTYDSC_CHARSPINNER_HPP

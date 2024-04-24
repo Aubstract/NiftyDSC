@@ -37,22 +37,28 @@ ObjSelPage tstobjsel;
 
 void setup()
 {
-    // Serial.begin(115200);
+    Serial.begin(115200);
+    while (!Serial)
+    {
+        delay(10);
+    }
+    delay(50);
+    Serial.println("Startup");
 
+    Serial.println("Initializing TFT");
     // turn on backlite
     pinMode(TFT_BACKLITE, OUTPUT);
     // digitalWrite(TFT_BACKLITE, HIGH);
     ledcSetup(0, 5000, 8);
     ledcAttachPin(TFT_BACKLITE, 0);
     ledcWrite(0, 64);
-
     // turn on the TFT / I2C power supply
     pinMode(TFT_I2C_POWER, OUTPUT);
     digitalWrite(TFT_I2C_POWER, HIGH);
-
     // initialize TFT
     tft.init(DISP_H, DISP_W);
     tft.setRotation(1);
+    Serial.println("TFT initialized");
 
     canvas.setFont(&zero4b11a12pt7b);
 
@@ -155,14 +161,22 @@ void setup()
 
     std::vector<const uint8_t*> testvect;
 
+    Serial.println("Initializing Page...");
     tstobjsel.init(
-        &canvas, 0, 0, 240, 135, GUI_DEFAULT, GUI_BACKGROUND, GUI_SELECT, obj_sel_icon, testvect);
+        &tft, 0, 0, 240, 135, GUI_DEFAULT, GUI_BACKGROUND, GUI_SELECT, obj_sel_icon, testvect);
+    Serial.println("Page initialized");
+    Serial.println("Setting Page in scope...");
     tstobjsel.setScope();
+    Serial.println("Page in scope");
+    Serial.println("Drawing Page...");
     tstobjsel.draw();
+    Serial.println("Page drawn");
 
+    Serial.println("Initializing IO pins...");
     pinMode(0, INPUT_PULLUP);
     pinMode(1, INPUT_PULLDOWN);
     pinMode(2, INPUT_PULLDOWN);
+    Serial.println("IO pins initialized");
 }
 
 bool    buttons_pressed[3]     = { false, false, false };
@@ -176,11 +190,13 @@ void loop()
         = { &cat_sel, &cat_num[0], &cat_num[1], &cat_num[2], &cat_num[3], &tgl_swtch };
     */
 
+    /*
     for (int i = 0; i < 3; i++)
     {
         old_buttons_pressed[i] = buttons_pressed[i];
         buttons_pressed[i]     = digitalRead(i);
     }
+    */
 
 
     /*

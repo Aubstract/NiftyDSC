@@ -15,7 +15,7 @@ private:
     uint8_t                  char_size_multiplier;
     bool                     wrap_text;
 
-    void drawValue(uint16_t color, uint16_t background_color) override;
+    void drawValue(uint16_t);
 
 public:
     void init(Adafruit_GFX*            _display,
@@ -32,6 +32,8 @@ public:
               std::vector<std::string> _string_value_list,
               uint8_t                  _char_size_multiplier,
               bool                     _wrap_text);
+
+    void draw() override;
 };
 
 #endif  // NIFTYDSC_STRINGSPINNER_HPP

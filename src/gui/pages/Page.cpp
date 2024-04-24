@@ -33,12 +33,6 @@ void Page::init(Adafruit_GFX*               _display,
     elements         = _elements;
 }
 
-void Page::draw()
-{
-    display->fillRect(x, y, page_w, page_h, background_color);
-    drawElements();
-}
-
 void Page::setScope()
 {
     in_scope = true;

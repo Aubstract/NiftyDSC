@@ -17,12 +17,7 @@
 
 class ObjSelPage : public Page
 {
-private:
-    void drawElements() override;
-
 public:
-    ObjSelPage();
-
     void init(Adafruit_GFX*               _display,
               int16_t                     _x,
               int16_t                     _y,
@@ -33,6 +28,8 @@ public:
               uint16_t                    _select_color,
               const uint8_t*              _page_icon,
               std::vector<const uint8_t*> _button_icons);
+
+    void draw() override;
 
     void handleUserInput(std::vector<bool>) override;
     void incSelectIndex() override;

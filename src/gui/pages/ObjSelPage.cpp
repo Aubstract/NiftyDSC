@@ -4,10 +4,6 @@
 
 #include "ObjSelPage.hpp"
 
-ObjSelPage::ObjSelPage() : Page()
-{
-}
-
 void ObjSelPage::init(Adafruit_GFX*               _display,
                       int16_t                     _x,
                       int16_t                     _y,
@@ -121,6 +117,13 @@ void ObjSelPage::init(Adafruit_GFX*               _display,
                     18,
                     char_list,
                     1);
+
+    Serial.printf("x: %d y: %d w: %d h %d bck_clr: %u\n", x, y, page_w, page_h, background_color);
+    Serial.printf("dflt_clr: %u slct_clr: %u slct_indx: %u elmnts_sz: %u\n",
+                  default_color,
+                  select_color,
+                  select_index,
+                  elements.size());
 }
 
 void ObjSelPage::handleUserInput(std::vector<bool> buttons)
@@ -153,10 +156,13 @@ void ObjSelPage::handleUserInput(std::vector<bool> buttons)
     }
 }
 
-void ObjSelPage::drawElements()
+void ObjSelPage::draw()
 {
+    display->fillRect(x, y, page_w, page_h, background_color);
+
     for (size_t i = 0; i < elements.size(); i++)
     {
+        Serial.printf("Drawing element: %u", i);
         elements[i]->draw();
     }
 }

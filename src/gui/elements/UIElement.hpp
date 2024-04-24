@@ -8,6 +8,14 @@
 #include <Adafruit_GFX.h>
 #include <cstdint>
 
+enum UIType
+{
+    CHAR_SPINNER,
+    ICON_SPINNER,
+    STRING_SPINNER,
+    TOGGLE_SWITCH
+};
+
 class UIElement
 {
 protected:
@@ -21,8 +29,7 @@ protected:
     uint16_t       default_color;
     uint16_t       background_color;
     bool           selected;
-
-    virtual void drawValue(uint16_t color, uint16_t background_color) = 0;
+    UIType         type;
 
 public:
     UIElement();
@@ -36,12 +43,14 @@ public:
               uint16_t       _default_color,
               uint16_t       _background_color);
 
-    void         draw();
-    void         select();
-    void         deselect();
+    void select();
+    void deselect();
+
+    virtual void draw()     = 0;
     virtual void interact() = 0;
 
     bool    isSelected() const;
+    UIType  getType() const;
     int16_t getWidth() const;
     int16_t getHeight() const;
     int16_t getXCoord() const;

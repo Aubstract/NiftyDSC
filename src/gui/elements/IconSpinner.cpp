@@ -36,12 +36,28 @@ void IconSpinner::init(Adafruit_GFX*               _display,
     icon_value_h    = _icon_value_h;
 }
 
-void IconSpinner::drawValue(uint16_t color, uint16_t background_color)
+void IconSpinner::drawValue(uint16_t color)
 {
+    Serial.print("Drawing IconSpinner");
     display->drawBitmap(x + value_x_offset,
                         y + value_y_offset,
                         icon_value_list.at(index),
                         icon_value_w,
                         icon_value_h,
                         color);
+}
+
+void IconSpinner::draw()
+{
+    if (selected)
+    {
+        display->fillRect(x, y, w, h, background_color);
+        drawValue(select_color);
+        display->drawBitmap(x, y, select_icon, w, h, default_color);
+    }
+    else
+    {
+        display->fillRect(x, y, w, h, background_color);
+        drawValue(default_color);
+    }
 }

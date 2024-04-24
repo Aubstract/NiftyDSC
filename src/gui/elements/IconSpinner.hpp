@@ -15,7 +15,7 @@ private:
     int16_t                     icon_value_w;
     int16_t                     icon_value_h;
 
-    void drawValue(uint16_t color, uint16_t background_color) override;
+    void drawValue(uint16_t color);
 
 public:
     void init(Adafruit_GFX*               _display,
@@ -32,6 +32,8 @@ public:
               std::vector<const uint8_t*> _icon_value_list,
               int16_t                     _icon_value_w,
               int16_t                     _icon_value_h);
+
+    void draw() override;
 };
 
 #endif  // NIFTYDSC_ICONSPINNER_HPP
