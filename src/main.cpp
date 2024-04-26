@@ -1,39 +1,31 @@
-
-/*Using LVGL with Arduino requires some extra steps:
- *Be sure to read the docs here: https://docs.lvgl.io/master/get-started/platforms/arduino.html  */
-
 #include <lvgl.h>
 #include <TFT_eSPI.h>
 
-#define TFT_HOR_RES 240
-#define TFT_VER_RES 135
+#define DRAW_BUF_SIZE (TFT_WIDTH * TFT_HEIGHT / 10 * (LV_COLOR_DEPTH / 8))
+uint32_t draw_buf[DRAW_BUF_SIZE / 4];
+
+uint32_t my_tick_get_cb()
+{
+    return esp_timer_get_time() / 1000L;
+}
 
 void setup()
 {
+    lv_init();
+
+    lv_tick_set_cb(my_tick_get_cb);
+
+    lv_display_t* disp = lv_tft_espi_create(TFT_HEIGHT, TFT_WIDTH, draw_buf, sizeof(draw_buf));
+
+    lv_display_set_offset(disp, -40, 52);
+
+    lv_obj_t* label = lv_label_create(lv_scr_act());
+    lv_label_set_text(label, "Hello Arduino, I'm LVGL!");
+    lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
 }
 
 void loop()
 {
+    lv_task_handler();
+    delay(5);
 }
-
-
-/*
-// Created by Aubrey on 3/27/2024
-
-#include <TFT_eSPI.h>
-#include <Arduino.h>
-
-TFT_eSPI tft = TFT_eSPI();
-
-void setup()
-{
-    tft.init();
-    tft.setRotation(3);
-    tft.fillScreen(TFT_BLACK);
-    tft.drawString("Hello, world!", tft.width() / 2, tft.height() / 2, 2);
-}
-
-void loop()
-{
-}
-*/
