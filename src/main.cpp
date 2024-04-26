@@ -16,6 +16,8 @@
 #include <cstdint>
 #include <vector>
 
+#include "compile_conditions.hpp"
+
 #define VERSION 0.1
 #define DISP_W 240
 #define DISP_H 135
@@ -43,9 +45,9 @@ void setup()
         delay(10);
     }
     delay(50);
-    Serial.println("Startup");
+    debugln("Startup");
 
-    Serial.println("Initializing TFT");
+    debugln("Initializing TFT");
     // turn on backlite
     pinMode(TFT_BACKLITE, OUTPUT);
     // digitalWrite(TFT_BACKLITE, HIGH);
@@ -58,7 +60,7 @@ void setup()
     // initialize TFT
     tft.init(DISP_H, DISP_W);
     tft.setRotation(1);
-    Serial.println("TFT initialized");
+    debugln("TFT initialized");
 
     canvas.setFont(&zero4b11a12pt7b);
 
@@ -159,24 +161,23 @@ void setup()
         }
     */
 
-    std::vector<const uint8_t*> testvect;
+    debugln("Initializing Page...");
+    tstobjsel.init(&tft, 0, 0, 240, 135, GUI_DEFAULT, GUI_BACKGROUND, GUI_SELECT, obj_sel_icon);
+    debugln("Page initialized");
 
-    Serial.println("Initializing Page...");
-    tstobjsel.init(
-        &tft, 0, 0, 240, 135, GUI_DEFAULT, GUI_BACKGROUND, GUI_SELECT, obj_sel_icon, testvect);
-    Serial.println("Page initialized");
-    Serial.println("Setting Page in scope...");
+    debugln("Drawing Page...");
+    tstobjsel.draw(tstobjsel);
+    debugln("Page drawn");
+
+    debugln("Setting Page in scope...");
     tstobjsel.setScope();
-    Serial.println("Page in scope");
-    Serial.println("Drawing Page...");
-    tstobjsel.draw();
-    Serial.println("Page drawn");
+    debugln("Page in scope");
 
-    Serial.println("Initializing IO pins...");
+    debugln("Initializing IO pins...");
     pinMode(0, INPUT_PULLUP);
     pinMode(1, INPUT_PULLDOWN);
     pinMode(2, INPUT_PULLDOWN);
-    Serial.println("IO pins initialized");
+    debugln("IO pins initialized");
 }
 
 bool    buttons_pressed[3]     = { false, false, false };
@@ -226,6 +227,6 @@ void loop()
         }
     */
 
-    tft.drawRGBBitmap(0, 0, canvas.getBuffer(), 240, 135);
-    delay(100);
+    // tft.drawRGBBitmap(0, 0, canvas.getBuffer(), 240, 135);
+    // delay(100);
 }

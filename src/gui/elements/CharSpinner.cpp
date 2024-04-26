@@ -4,6 +4,11 @@
 
 #include "CharSpinner.hpp"
 
+CharSpinner::CharSpinner() : Spinner()
+{
+    type = CHAR_SPINNER;
+}
+
 void CharSpinner::init(Adafruit_GFX*     _display,
                        int16_t           _x,
                        int16_t           _y,
@@ -36,6 +41,7 @@ void CharSpinner::init(Adafruit_GFX*     _display,
 
 void CharSpinner::drawValue(uint16_t color)
 {
+    debugln("Made it to drawValue of CharSpinner");
     display->drawChar(x + value_x_offset,
                       y + value_y_offset,
                       char_value_list.at(index),
@@ -44,8 +50,11 @@ void CharSpinner::drawValue(uint16_t color)
                       char_size_multiplier);
 }
 
-void CharSpinner::draw()
+void CharSpinner::drawCharSpinner()
 {
+    debugln("Drawing CharSpinner");
+    debugf("selected: %u", selected);
+
     if (selected)
     {
         display->fillRect(x, y, w, h, background_color);

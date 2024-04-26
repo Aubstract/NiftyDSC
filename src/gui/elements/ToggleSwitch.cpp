@@ -6,6 +6,7 @@
 
 ToggleSwitch::ToggleSwitch() : UIElement(), isOn(false)
 {
+    type = TOGGLE_SWITCH;
 }
 
 void ToggleSwitch::init(Adafruit_GFX*  _display,
@@ -28,7 +29,6 @@ void ToggleSwitch::init(Adafruit_GFX*  _display,
 
 void ToggleSwitch::drawValue(uint16_t color)
 {
-    Serial.print("Drawing ToggleSwitch");
     if (isOn)
     {
         display->drawBitmap(x, y, on_icon, w, h, color);
@@ -39,8 +39,10 @@ void ToggleSwitch::drawValue(uint16_t color)
     }
 }
 
-void ToggleSwitch::draw()
+void ToggleSwitch::drawToggleSwitch()
 {
+    debugln("Drawing ToggleSwitch");
+
     if (selected)
     {
         display->fillRect(x, y, w, h, background_color);

@@ -6,6 +6,7 @@
 #define NIFTYDSC_CHARSPINNER_HPP
 
 #include "Spinner.hpp"
+#include "compile_conditions.hpp"
 #include <vector>
 
 class CharSpinner : public Spinner
@@ -16,6 +17,7 @@ private:
     void              drawValue(uint16_t);
 
 public:
+    CharSpinner();
     void init(Adafruit_GFX*     _display,
               int16_t           _x,
               int16_t           _y,
@@ -29,7 +31,7 @@ public:
               int16_t           _value_y_offset,
               std::vector<char> _char_value_list,
               uint8_t           _char_size_multiplier);
-    void draw() override;
+    void drawCharSpinner();
 };
 
 #endif  // NIFTYDSC_CHARSPINNER_HPP

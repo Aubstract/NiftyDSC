@@ -6,6 +6,7 @@
 #define NIFTYDSC_TOGGLESWITCH_H
 
 #include "UIElement.hpp"
+#include "compile_conditions.hpp"
 
 class ToggleSwitch : public UIElement
 {
@@ -30,7 +31,7 @@ public:
               const uint8_t* _on_icon,
               const uint8_t* _off_icon);
 
-    void draw() override;
+    void drawToggleSwitch();
 
     void setOn();
     void setOff();

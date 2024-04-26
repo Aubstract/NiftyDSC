@@ -4,6 +4,11 @@
 
 #include "IconSpinner.hpp"
 
+IconSpinner::IconSpinner() : Spinner()
+{
+    type = ICON_SPINNER;
+}
+
 void IconSpinner::init(Adafruit_GFX*               _display,
                        int16_t                     _x,
                        int16_t                     _y,
@@ -38,7 +43,7 @@ void IconSpinner::init(Adafruit_GFX*               _display,
 
 void IconSpinner::drawValue(uint16_t color)
 {
-    Serial.print("Drawing IconSpinner");
+    debugln("Drawing IconSpinner");
     display->drawBitmap(x + value_x_offset,
                         y + value_y_offset,
                         icon_value_list.at(index),
@@ -47,8 +52,10 @@ void IconSpinner::drawValue(uint16_t color)
                         color);
 }
 
-void IconSpinner::draw()
+void IconSpinner::drawIconSpinner()
 {
+    debugln("Drawing IconSpinner");
+
     if (selected)
     {
         display->fillRect(x, y, w, h, background_color);

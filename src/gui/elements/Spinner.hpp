@@ -6,6 +6,7 @@
 #define NIFTYDSC_SPINNER_HPP
 
 #include "UIElement.hpp"
+#include "compile_conditions.hpp"
 #include <Adafruit_GFX.h>
 #include <cstdint>
 

@@ -4,35 +4,45 @@
 
 #include "ObjSelPage.hpp"
 
-void ObjSelPage::init(Adafruit_GFX*               _display,
-                      int16_t                     _x,
-                      int16_t                     _y,
-                      int16_t                     _page_w,
-                      int16_t                     _page_h,
-                      uint16_t                    _default_color,
-                      uint16_t                    _background_color,
-                      uint16_t                    _select_color,
-                      const uint8_t*              _page_icon,
-                      std::vector<const uint8_t*> _button_icons)
+void drawObjSel(Page& pg)
 {
-    const uint8_t NUM_DIGITS = 4;
-    CharSpinner   cat_num[NUM_DIGITS];
+    ObjSelPage* osp = static_cast<ObjSelPage*>(&pg);
+
+    debugf("\nUIType:\nCHARSPINNER: %u\nICONSPINNER: %u\nSTRINGSPINNER: %u\nTOGGLESWITCH: %u\n\n",
+           CHAR_SPINNER,
+           ICON_SPINNER,
+           STRING_SPINNER,
+           TOGGLE_SWITCH);
+
+    debugf("elmnts.sz(): %u\n", osp->elements.size());
+
+    osp->display->fillRect(osp->x, osp->y, osp->page_w, osp->page_h, osp->background_color);
+
+    for (size_t i = 0; i < osp->elements.size(); i++)
+    {
+        debugf("\nDrawing element: %u\n", i);
+        debugf("Element UIType: %u\n", osp->elements[i]->getType());
+        osp->elements[i]->draw();
+    }
+}
+
+ObjSelPage::ObjSelPage() : Page()
+{
+    draw = &drawObjSel;
+}
+
+void ObjSelPage::init(Adafruit_GFX*  _display,
+                      int16_t        _x,
+                      int16_t        _y,
+                      int16_t        _page_w,
+                      int16_t        _page_h,
+                      uint16_t       _default_color,
+                      uint16_t       _background_color,
+                      uint16_t       _select_color,
+                      const uint8_t* _page_icon)
+{
+    CharSpinner   place_1, place_10, place_100, place_1000;
     StringSpinner cat_sel;
-
-    std::vector<UIElement*> _elements
-        = { &cat_sel, &cat_num[0], &cat_num[1], &cat_num[2], &cat_num[3] };
-
-    Page::init(_display,
-               _x,
-               _y,
-               _page_w,
-               _page_h,
-               _default_color,
-               _background_color,
-               _select_color,
-               _page_icon,
-               _button_icons,
-               _elements);
 
     std::vector<std::string> string_list;
 
@@ -62,7 +72,7 @@ void ObjSelPage::init(Adafruit_GFX*               _display,
                  1,
                  false);
 
-    cat_num[0].init(display,
+    place_1000.init(display,
                     x_start + cat_sel.getWidth(),
                     y_start,
                     24,
@@ -76,54 +86,72 @@ void ObjSelPage::init(Adafruit_GFX*               _display,
                     char_list,
                     1);
 
-    cat_num[1].init(display,
-                    cat_num[0].getXCoord() + cat_num[0].getWidth() + offset,
-                    y_start,
-                    24,
-                    24,
-                    obj_sel_icon,
-                    select_color,
-                    default_color,
-                    background_color,
-                    2,
-                    18,
-                    char_list,
-                    1);
+    place_100.init(display,
+                   place_1000.getXCoord() + place_1000.getWidth() + offset,
+                   y_start,
+                   24,
+                   24,
+                   obj_sel_icon,
+                   select_color,
+                   default_color,
+                   background_color,
+                   2,
+                   18,
+                   char_list,
+                   1);
 
-    cat_num[2].init(display,
-                    cat_num[1].getXCoord() + cat_num[1].getWidth() + offset,
-                    y_start,
-                    24,
-                    24,
-                    obj_sel_icon,
-                    select_color,
-                    default_color,
-                    background_color,
-                    2,
-                    18,
-                    char_list,
-                    1);
-
-    cat_num[3].init(display,
-                    cat_num[2].getXCoord() + cat_num[2].getWidth() + offset,
-                    y_start,
-                    24,
-                    24,
-                    obj_sel_icon,
-                    select_color,
-                    default_color,
-                    background_color,
-                    2,
-                    18,
-                    char_list,
-                    1);
-
-    Serial.printf("x: %d y: %d w: %d h %d bck_clr: %u\n", x, y, page_w, page_h, background_color);
-    Serial.printf("dflt_clr: %u slct_clr: %u slct_indx: %u elmnts_sz: %u\n",
-                  default_color,
+    place_10.init(display,
+                  place_100.getXCoord() + place_100.getWidth() + offset,
+                  y_start,
+                  24,
+                  24,
+                  obj_sel_icon,
                   select_color,
-                  select_index,
-                  elements.size());
+                  default_color,
+                  background_color,
+                  2,
+                  18,
+                  char_list,
+                  1);
+
+    place_1.init(display,
+                 place_10.getXCoord() + place_10.getWidth() + offset,
+                 y_start,
+                 24,
+                 24,
+                 obj_sel_icon,
+                 select_color,
+                 default_color,
+                 background_color,
+                 2,
+                 18,
+                 char_list,
+                 1);
+
+    std::vector<UIElement*> _elements = { &cat_sel, &place_1000, &place_100, &place_10, &place_1 };
+
+    Page::init(_display,
+               _x,
+               _y,
+               _page_w,
+               _page_h,
+               _default_color,
+               _background_color,
+               _select_color,
+               _page_icon,
+               _elements);
+
+    debugln("\nIn ObjSelPage.init():");
+    debugf("x: %d y: %d w: %d h %d bck_clr: %u\n", x, y, page_w, page_h, background_color);
+    debugf("dflt_clr: %u slct_clr: %u slct_indx: %u elmnts_sz: %u\n",
+           default_color,
+           select_color,
+           select_index,
+           elements.size());
+    for (size_t i = 0; i < elements.size(); i++)
+    {
+        debugf("elements[%u].type = %u\n", i, elements[i]->getType());
+    }
 }
 
 void ObjSelPage::handleUserInput(std::vector<bool> buttons)
@@ -153,17 +181,6 @@ void ObjSelPage::handleUserInput(std::vector<bool> buttons)
             incSelectIndex();
             elements.at(select_index)->select();
         }
-    }
-}
-
-void ObjSelPage::draw()
-{
-    display->fillRect(x, y, page_w, page_h, background_color);
-
-    for (size_t i = 0; i < elements.size(); i++)
-    {
-        Serial.printf("Drawing element: %u", i);
-        elements[i]->draw();
     }
 }
 

@@ -6,9 +6,16 @@
 #define NIFTYDSC_PAGE_H
 
 #include "gui/elements/UIElement.hpp"
+#include "gui/elements/UIType.hpp"
+#include "compile_conditions.hpp"
 #include <Adafruit_GFX.h>
 #include <cstdint>
 #include <vector>
+
+enum PageType
+{
+    OBJSEL
+};
 
 class Page
 {
@@ -27,28 +34,29 @@ protected:
     std::vector<UIElement*>     elements;
     bool                        in_scope;
     bool                        return_scope_to_parent;
+    // PageType                    page_type;
 
 public:
     Page();
-    void init(Adafruit_GFX*               _display,
-              int16_t                     _x,
-              int16_t                     _y,
-              int16_t                     _page_w,
-              int16_t                     _page_h,
-              uint16_t                    _default_color,
-              uint16_t                    _background_color,
-              uint16_t                    _select_color,
-              const uint8_t*              _page_icon,
-              std::vector<const uint8_t*> _button_icons,
-              std::vector<UIElement*>     _elements);
+    void init(Adafruit_GFX*           _display,
+              int16_t                 _x,
+              int16_t                 _y,
+              int16_t                 _page_w,
+              int16_t                 _page_h,
+              uint16_t                _default_color,
+              uint16_t                _background_color,
+              uint16_t                _select_color,
+              const uint8_t*          _page_icon,
+              std::vector<UIElement*> _elements);
 
-    virtual void draw() = 0;
+    // void draw();
+    void (*draw)(Page&);
 
-    virtual void handleUserInput(std::vector<bool>) = 0;
+    virtual void handleUserInput(std::vector<bool>);
     void         setScope();
 
-    virtual void decSelectIndex() = 0;
-    virtual void incSelectIndex() = 0;
+    virtual void decSelectIndex();
+    virtual void incSelectIndex();
 };
 
 #endif  // NIFTYDSC_PAGE_H

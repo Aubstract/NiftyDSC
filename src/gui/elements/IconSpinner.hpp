@@ -6,6 +6,7 @@
 #define NIFTYDSC_ICONSPINNER_HPP
 
 #include "Spinner.hpp"
+#include "compile_conditions.hpp"
 #include <vector>
 
 class IconSpinner : public Spinner
@@ -18,6 +19,7 @@ private:
     void drawValue(uint16_t color);
 
 public:
+    IconSpinner();
     void init(Adafruit_GFX*               _display,
               int16_t                     _x,
               int16_t                     _y,
@@ -33,7 +35,7 @@ public:
               int16_t                     _icon_value_w,
               int16_t                     _icon_value_h);
 
-    void draw() override;
+    void drawIconSpinner();
 };
 
 #endif  // NIFTYDSC_ICONSPINNER_HPP

@@ -4,6 +4,11 @@
 
 #include "StringSpinner.hpp"
 
+StringSpinner::StringSpinner() : Spinner()
+{
+    type = STRING_SPINNER;
+}
+
 void StringSpinner::init(Adafruit_GFX*            _display,
                          int16_t                  _x,
                          int16_t                  _y,
@@ -45,19 +50,19 @@ void StringSpinner::drawValue(uint16_t color)
     display->println(string_value_list[index].c_str());
 }
 
-void StringSpinner::draw()
+void StringSpinner::drawStringSpinner()
 {
-    Serial.println("Drawing StringSpinner");
+    debugln("Drawing StringSpinner");
     if (selected)
     {
-        Serial.println("Selected");
+        debugln("Selected");
         display->fillRect(x, y, w, h, background_color);
         drawValue(select_color);
         display->drawBitmap(x, y, select_icon, w, h, default_color);
     }
     else
     {
-        Serial.println("Not selected");
+        debugln("Not selected");
         display->fillRect(x, y, w, h, background_color);
         drawValue(default_color);
     }

@@ -5,6 +5,7 @@
 #define NIFTYDSC_STRINGSPINNER_HPP
 
 #include "Spinner.hpp"
+#include "compile_conditions.hpp"
 #include <string>
 #include <vector>
 
@@ -18,6 +19,7 @@ private:
     void drawValue(uint16_t);
 
 public:
+    StringSpinner();
     void init(Adafruit_GFX*            _display,
               int16_t                  _x,
               int16_t                  _y,
@@ -33,7 +35,7 @@ public:
               uint8_t                  _char_size_multiplier,
               bool                     _wrap_text);
 
-    void draw() override;
+    void drawStringSpinner();
 };
 
 #endif  // NIFTYDSC_STRINGSPINNER_HPP

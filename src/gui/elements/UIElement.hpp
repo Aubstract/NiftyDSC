@@ -5,16 +5,10 @@
 #ifndef NIFTYDSC_UIELEMENT_HPP
 #define NIFTYDSC_UIELEMENT_HPP
 
+#include "UIType.hpp"
+#include "compile_conditions.hpp"
 #include <Adafruit_GFX.h>
 #include <cstdint>
-
-enum UIType
-{
-    CHAR_SPINNER,
-    ICON_SPINNER,
-    STRING_SPINNER,
-    TOGGLE_SWITCH
-};
 
 class UIElement
 {
@@ -46,7 +40,7 @@ public:
     void select();
     void deselect();
 
-    virtual void draw()     = 0;
+    void         draw();
     virtual void interact() = 0;
 
     bool    isSelected() const;
