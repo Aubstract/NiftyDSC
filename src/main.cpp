@@ -1,5 +1,7 @@
+
 #include <lvgl.h>
 #include <TFT_eSPI.h>
+#include "lv_conf.h"
 
 #define DRAW_BUF_SIZE (TFT_WIDTH * TFT_HEIGHT / 10 * (LV_COLOR_DEPTH / 8))
 uint32_t draw_buf[DRAW_BUF_SIZE / 4];
