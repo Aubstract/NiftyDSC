@@ -12,8 +12,6 @@ struct Catalog
 {
     std::string              name;
     std::vector<PackedRaDec> objects;
-
-    Catalog() = default;
 };
 
 #endif  // NIFTYDSC_CATALOG_HPP
