@@ -9,47 +9,29 @@ function getLocation() {
     }
   }
   
-  function showPosition(position) {
+function showPosition(position) {
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
-  
+
     // Send location data to server using a POST request
     fetch('/location', {
-      method: 'POST',
-      headers: {
+        method: 'POST',
+        headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: `latitude=${latitude}&longitude=${longitude}`
+        },
+        body: `latitude=${latitude}&longitude=${longitude}`
     })
     .then(response => response.text())
     .then(data => {
-      console.log(data);
+        console.log(data);
     })
     .catch(error => {
-      console.error(error);
+        console.error(error);
     });
-  
-    document.getElementById("location").innerHTML = "Latitude: " + latitude + "<br>Longitude: " + longitude;
-  }
-  
-  function showError(error) {
-    document.getElementById("location").innerHTML = "Error: " + error.message;
-  }
 
-/*
-function getLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition, showError);
-    } else {
-      document.getElementById("location").innerHTML = "Geolocation is not supported by this browser.";
-    }
-  }
-  
-  function showPosition(position) {
-    document.getElementById("location").innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
-  }
-  
-  function showError(error) {
+    document.getElementById("location").innerHTML = "Latitude: " + latitude + "<br>Longitude: " + longitude;
+}
+
+function showError(error) {
     document.getElementById("location").innerHTML = "Error: " + error.message;
-  }
-*/
+}
