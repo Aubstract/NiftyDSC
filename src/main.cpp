@@ -1,41 +1,26 @@
-//
-// Created by Aubrey on 3/27/2024.
-//
+#include "wifi_creds.hpp"
 
-#include "gui/GUIConstants.hpp"
-#include "gui/fonts/zero4b11a12pt7b.h"
-#include "gui/icons/icons.h"
-#include "gui/elements/CharSpinner.hpp"
-#include "gui/elements/Spinner.hpp"
-#include "gui/elements/StringSpinner.hpp"
-#include "gui/elements/ToggleSwitch.hpp"
-#include "gui/pages/ObjSelPage.hpp"
-#include <Adafruit_GFX.h>
-#include <Adafruit_ST7789.h>
 #include <Arduino.h>
+#include <WiFi.h>
+#include <WebServer.h>
+#include <LittleFS.h>
 #include <cstdint>
-#include <vector>
+//#include "gui/gui_setup.cpp"
 
-#include "compile_conditions.hpp"
+WebServer server(80);
 
-#define VERSION 0.1
-#define DISP_W 240
-#define DISP_H 135
+const char* ssid         = NIFTYDSC_SSID;
+const char* password     = NIFTYDSC_PASSWORD;
+const char* htmlFilePath = "/index.html";
+const char* jsFilePath   = "/dateTime.js";
 
-Adafruit_ST7789 tft(TFT_CS, TFT_DC, TFT_RST);
-GFXcanvas16     canvas(240, 135);
+String index_html;
+String date_time_js;
+String location = "";
 
-/*
-const std::vector<const uint8_t*> test      = { obj_sel_icon, webUI };
-const std::vector<char>           char_list = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-const std::vector<std::string>    string_list = { "  M", "NGC", "SH2", "UGC" };
-const uint8_t                     num_digits  = 4;
-CharSpinner                       cat_num[num_digits];
-StringSpinner                     cat_sel;
-ToggleSwitch                      tgl_swtch;
-*/
-
-ObjSelPage tstobjsel;
+IPAddress local_IP(192, 168, 1, 201);
+IPAddress gateway(192, 168, 1, 1);
+IPAddress subnet(255, 255, 255, 0);
 
 void setup()
 {
@@ -45,188 +30,157 @@ void setup()
         delay(10);
     }
     delay(50);
-    debugln("Startup");
 
-    debugln("Initializing TFT");
-    // turn on backlite
-    pinMode(TFT_BACKLITE, OUTPUT);
-    // digitalWrite(TFT_BACKLITE, HIGH);
-    ledcSetup(0, 5000, 8);
-    ledcAttachPin(TFT_BACKLITE, 0);
-    ledcWrite(0, 64);
-    // turn on the TFT / I2C power supply
-    pinMode(TFT_I2C_POWER, OUTPUT);
-    digitalWrite(TFT_I2C_POWER, HIGH);
-    // initialize TFT
-    tft.init(DISP_H, DISP_W);
-    tft.setRotation(1);
-    debugln("TFT initialized");
+    // Serial.println("Starting WiFi access point...");
+    // WiFi.mode(WIFI_AP);
 
-    canvas.setFont(&zero4b11a12pt7b);
+    Serial.printf("ssid: %s password: %s\n", ssid, password);
 
-    /*
-        int16_t x_start = 0;  // canvas.width() / 2;
-        int16_t y_start = (canvas.height() / 2) - 12;
-        int16_t offset  = -2;
+    Serial.printf("Wifi startup status: %u\n", WiFi.begin(ssid, password));
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        Serial.println("waiting to connect...");
+        delay(200);
+    }
+    Serial.printf("IP Address: %s\n", WiFi.localIP().toString());
 
-        cat_sel.init(&canvas,
-                     x_start,
-                     y_start,
-                     72,
-                     24,
-                     cat_sel_icon,
-                     GUI_DEFAULT,
-                     GUI_DIMMED,
-                     GUI_BACKGROUND,
-                     3,
-                     18,
-                     string_list,
-                     1,
-                     false);
+    if (LittleFS.begin())
+    {
+        Serial.println("LittleFS mounted successfully");
+    }
+    else
+    {
+        Serial.println("LittleFS mount failed");
+    }
 
-        cat_num[0].init(&canvas,
-                        x_start + cat_sel.getWidth(),
-                        y_start,
-                        24,
-                        24,
-                        obj_sel_icon,
-                        GUI_DEFAULT,
-                        GUI_DIMMED,
-                        GUI_BACKGROUND,
-                        2,
-                        18,
-                        char_list,
-                        1);
-
-        cat_num[1].init(&canvas,
-                        cat_num[0].getXCoord() + cat_num[0].getWidth() + offset,
-                        y_start,
-                        24,
-                        24,
-                        obj_sel_icon,
-                        GUI_DEFAULT,
-                        GUI_DIMMED,
-                        GUI_BACKGROUND,
-                        2,
-                        18,
-                        char_list,
-                        1);
-
-        cat_num[2].init(&canvas,
-                        cat_num[1].getXCoord() + cat_num[1].getWidth() + offset,
-                        y_start,
-                        24,
-                        24,
-                        obj_sel_icon,
-                        GUI_DEFAULT,
-                        GUI_DIMMED,
-                        GUI_BACKGROUND,
-                        2,
-                        18,
-                        char_list,
-                        1);
-
-        cat_num[3].init(&canvas,
-                        cat_num[2].getXCoord() + cat_num[2].getWidth() + offset,
-                        y_start,
-                        24,
-                        24,
-                        obj_sel_icon,
-                        GUI_DEFAULT,
-                        GUI_DIMMED,
-                        GUI_BACKGROUND,
-                        2,
-                        18,
-                        char_list,
-                        1);
-
-        tgl_swtch.init(&canvas,
-                       cat_num[3].getXCoord() + cat_num[3].getWidth(),
-                       y_start,
-                       32,
-                       24,
-                       switch_sel_icon,
-                       GUI_DEFAULT,
-                       GUI_DIMMED,
-                       GUI_BACKGROUND,
-                       switch_on,
-                       switch_off);
-        tgl_swtch.draw();
-
-        cat_sel.select();
-        cat_sel.draw();
-        for (int i = 0; i < num_digits; i++)
+    if (LittleFS.exists(htmlFilePath))
+    {
+        File html_file = LittleFS.open(htmlFilePath, "r");
+        if (html_file)
         {
-            cat_num[i].draw();
+            index_html = html_file.readString();  // html_file.readStringUntil('\n');
+            html_file.close();
+            Serial.println("HTML file loaded successfully");
         }
-    */
+        else
+        {
+            Serial.println("Failed to open HTML file");
+        }
+    }
+    else
+    {
+        Serial.println("index_html file not found");
+    }
 
-    debugln("Initializing Page...");
-    tstobjsel.init(&tft, 0, 0, 240, 135, GUI_DEFAULT, GUI_BACKGROUND, GUI_SELECT, obj_sel_icon);
-    debugln("Page initialized");
+    if (LittleFS.exists(jsFilePath))
+    {
+        File js_file = LittleFS.open(jsFilePath, "r");
+        if (js_file)
+        {
+            date_time_js = js_file.readString();  // js_file.readStringUntil('\n');
+            js_file.close();
+            Serial.println("JavaScript file loaded successfully");
+        }
+        else
+        {
+            Serial.println("Failed to open JavaScript file");
+        }
+    }
+    else
+    {
+        Serial.println("JavaScript file not found");
+    }
 
-    debugln("Drawing Page...");
-    tstobjsel.draw(tstobjsel);
-    debugln("Page drawn");
+    LittleFS.end();
 
-    debugln("Setting Page in scope...");
-    tstobjsel.setScope();
-    debugln("Page in scope");
+    server.on("/", HTTP_GET, []() {
+        Serial.println("Requesting index.html");
+        if (!LittleFS.begin())
+        {
+            Serial.println("LittleFS Mount Failed");
+            return;
+        }
+        File file = LittleFS.open("/index.html", "r");
+        if (file)
+        {
+            server.send(200, "text/html", file.readString());
+            file.close();
+        }
+        else
+        {
+            server.send(404, "text/plain", "404 Not Found");
+        }
+        LittleFS.end();
+    });
 
-    debugln("Initializing IO pins...");
-    pinMode(0, INPUT_PULLUP);
-    pinMode(1, INPUT_PULLDOWN);
-    pinMode(2, INPUT_PULLDOWN);
-    debugln("IO pins initialized");
+    server.on("/dateTime.js", HTTP_GET, []() {
+        Serial.println("Requesting dateTime.js");
+        if (!LittleFS.begin())
+        {
+            Serial.println("LittleFS Mount Failed");
+            return;
+        }
+        File file = LittleFS.open("/dateTime.js", "r");
+        if (file)
+        {
+            server.send(200, "text/javascript", file.readString());
+            file.close();
+        }
+        else
+        {
+            server.send(404, "text/plain", "404 Not Found");
+        }
+        LittleFS.end();
+    });
+
+    server.on("/date-time", HTTP_POST, []() {
+        uint32_t server_now = millis();
+        if (!LittleFS.begin())
+        {
+            Serial.println("LittleFS Mount Failed");
+            return;
+        }
+        if (!server.hasArg("dateTime"))
+        {
+            server.send(400, "text/plain", "Missing date and time data!");
+            LittleFS.end();
+            return;
+        }
+        String   dateTime         = server.arg("dateTime");
+        uint32_t server_proc_time = millis() - server_now;
+        uint32_t network_time     = server_proc_time + server.arg("elapsedTime").toInt();
+
+        Serial.println("Received date and time: " + dateTime);
+        Serial.printf("Offset: %u, server_proc_time: %u, elapsed_time: %u\n",
+                      network_time,
+                      server_proc_time,
+                      network_time);
+        server.send(200, "text/plain", "Date and time received!");
+        LittleFS.end();
+    });
+
+    server.on("/submit", HTTP_POST, []() {
+        if (!LittleFS.begin())
+        {
+            Serial.println("LittleFS Mount Failed");
+            return;
+        }
+        if (!server.hasArg("dateTime"))
+        {
+            server.send(400, "text/plain", "Missing date and time data!");
+            LittleFS.end();
+            return;
+        }
+
+        server.send(200, "text/plain", "Date and time received!");
+        LittleFS.end();
+    });
+
+    server.begin();
+    Serial.println("Server started");
 }
-
-bool    buttons_pressed[3]     = { false, false, false };
-bool    old_buttons_pressed[3] = { false, false, false };
-uint8_t sel_index              = 0;
 
 void loop()
 {
-    /*
-    std::vector<UIElement*> elements
-        = { &cat_sel, &cat_num[0], &cat_num[1], &cat_num[2], &cat_num[3], &tgl_swtch };
-    */
-
-    /*
-    for (int i = 0; i < 3; i++)
-    {
-        old_buttons_pressed[i] = buttons_pressed[i];
-        buttons_pressed[i]     = digitalRead(i);
-    }
-    */
-
-
-    /*
-        if (!buttons_pressed[0] && old_buttons_pressed[0])
-        {
-            elements.at(sel_index)->interact();
-        }
-
-        if (buttons_pressed[1] && !old_buttons_pressed[1])
-        {
-            if (sel_index)
-            {
-                elements.at(sel_index)->deselect();
-                sel_index--;
-                elements.at(sel_index)->select();
-            }
-        }
-
-        if (buttons_pressed[2] && !old_buttons_pressed[2])
-        {
-            if (sel_index < elements.size())
-            {
-                elements.at(sel_index)->deselect();
-                sel_index++;
-                elements.at(sel_index)->select();
-            }
-        }
-    */
-
-    // tft.drawRGBBitmap(0, 0, canvas.getBuffer(), 240, 135);
-    // delay(100);
+    server.handleClient();  // Handle incoming client requests
 }

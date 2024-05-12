@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ESP32 Web Server</title>
+</head>
+
+<body>
+    <h1>Your Device's Date and Time</h1>
+    <button onclick="sendCurrentDateTime()">Get Current Date & Time</button>
+    <script src="/dateTime.js"></script>
+
+    <h1>Latitude and Longitude Form</h1>
+    <form id="coordForm" action="/submit" method="POST">
+        <label for="latLong">Enter Latitude and Longitude (comma-separated):</label><br>
+        <input type="text" id="latLong" name="latLong" placeholder="Latitude, Longitude"><br>
+        <input type="hidden" id="timestamp" name="timestamp">
+        <input type="submit" value="Submit">
+    </form>
+
+    <script>
+        // Get the form element
+        var form = document.getElementById("coordForm");
+
+        // Add event listener to the form submission
+        form.addEventListener("submit", function (event) {
+            // Get the current timestamp
+            var currentTime = new Date().toISOString();
+
+            // Set the value of the hidden timestamp field
+            document.getElementById("timestamp").value = currentTime;
+        });
+    </script>
+</body>
+
+</html>
