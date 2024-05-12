@@ -1,3 +1,6 @@
+src/NiftyDSC.code-workspace
+include/wifi_creds.hpp
+
 .pio
 .VSCodeCounter
 .vscode/.browse.c_cpp.db*
