@@ -1,10 +1,9 @@
 {
     "folders": [
-		{
-			"name": "NiftyDSC",
-			"path": ".."
-		}
-	],
+        {
+            "path": ".."
+        }
+    ],
     "settings": {
         "files.associations": {
             "cstdint": "cpp",
