@@ -1,5 +1,6 @@
 # My own stuff
 include/wifi_creds.hpp
+src/NiftyDSC.code-workspace
 
 .pio
 .VSCodeCounter
