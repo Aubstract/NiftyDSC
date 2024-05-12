@@ -6,48 +6,31 @@
 </head>
 
 <body>
-    <h1>Hello from ESP32-S3!</h1>
+    <h1>Your Device's Date and Time</h1>
+    <button onclick="sendCurrentDateTime()">Get Current Date & Time</button>
+    <script src="/dateTime.js"></script>
+
+    <h1>Latitude and Longitude Form</h1>
+    <form id="coordForm" action="/submit" method="POST">
+        <label for="latLong">Enter Latitude and Longitude (comma-separated):</label><br>
+        <input type="text" id="latLong" name="latLong" placeholder="Latitude, Longitude"><br>
+        <input type="hidden" id="timestamp" name="timestamp">
+        <input type="submit" value="Submit">
+    </form>
+
     <script>
-        function getLocation() {
-            console.log("called getLocation()");
-            if (navigator.geolocation) {
-                console.log("navigator.geolocation is valid");
-                navigator.geolocation.getCurrentPosition(showPosition, showError, { enableHighAccuracy: true });
-            } else {
-                console.log("navigator.geolocation is NOT valid");
-                document.getElementById("location").innerHTML = "Geolocation is not supported by this browser.";
-            }
-        }
+        // Get the form element
+        var form = document.getElementById("coordForm");
 
-        function showPosition(position) {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
+        // Add event listener to the form submission
+        form.addEventListener("submit", function (event) {
+            // Get the current timestamp
+            var currentTime = new Date().toISOString();
 
-            // Send location data to server using a POST request
-            fetch('/location', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `latitude=${latitude}&longitude=${longitude}`
-            })
-                .then(response => response.text())
-                .then(data => {
-                    console.log(data);
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-
-            document.getElementById("location").innerHTML = "Latitude: " + latitude + "<br>Longitude: " + longitude;
-        }
-
-        function showError(error) {
-            document.getElementById("location").innerHTML = "Error: " + error.message;
-        }
+            // Set the value of the hidden timestamp field
+            document.getElementById("timestamp").value = currentTime;
+        });
     </script>
-    <button onclick="getLocation()">Get Location</button>
-    <p id="location"></p>
 </body>
 
 </html>

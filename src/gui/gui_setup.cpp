@@ -17,11 +17,8 @@ uint32_t my_tick_get_cb()
 void gui_setup()
 {
     lv_init();
-
     lv_tick_set_cb(my_tick_get_cb);
-
     lv_display_t* disp = lv_tft_espi_create(TFT_HEIGHT, TFT_WIDTH, draw_buf, sizeof(draw_buf));
-
     lv_display_set_offset(disp, -40, 52);
 
     lv_obj_t* label = lv_label_create(lv_scr_act());

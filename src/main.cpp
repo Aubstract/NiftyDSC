@@ -2,22 +2,23 @@
 
 #include <Arduino.h>
 #include <WiFi.h>
-#include <ESPAsyncWebServer.h>
-#include <SPIFFS.h>
+#include <WebServer.h>
+#include <LittleFS.h>
+#include <cstdint>
 //#include "gui/gui_setup.cpp"
 
-AsyncWebServer server(80);
+WebServer server(80);
 
 const char* ssid         = NIFTYDSC_SSID;
 const char* password     = NIFTYDSC_PASSWORD;
 const char* htmlFilePath = "/index.html";
-const char* jsFilePath   = "/location.js";
+const char* jsFilePath   = "/dateTime.js";
 
-String html;
-String js;
+String index_html;
+String date_time_js;
 String location = "";
 
-IPAddress local_IP(192, 168, 1, 64);
+IPAddress local_IP(192, 168, 1, 201);
 IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
 
@@ -28,31 +29,38 @@ void setup()
     {
         delay(10);
     }
+    delay(50);
 
-    Serial.println("Starting WiFi access point...");
+    // Serial.println("Starting WiFi access point...");
     // WiFi.mode(WIFI_AP);
-    WiFi.config(local_IP, gateway, subnet);
-    WiFi.begin(ssid, password);
+
+    Serial.printf("ssid: %s password: %s\n", ssid, password);
+
+    Serial.printf("Wifi startup status: %u\n", WiFi.begin(ssid, password));
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        Serial.println("waiting to connect...");
+        delay(200);
+    }
     Serial.printf("IP Address: %s\n", WiFi.localIP().toString());
 
-    if (SPIFFS.begin())
+    if (LittleFS.begin())
     {
-        Serial.println("SPIFFS mounted successfully");
+        Serial.println("LittleFS mounted successfully");
     }
     else
     {
-        Serial.println("SPIFFS mount failed");
+        Serial.println("LittleFS mount failed");
     }
 
-    if (SPIFFS.exists(htmlFilePath))
+    if (LittleFS.exists(htmlFilePath))
     {
-        File html_file = SPIFFS.open(htmlFilePath, "r");
+        File html_file = LittleFS.open(htmlFilePath, "r");
         if (html_file)
         {
-            html = html_file.readString();  // html_file.readStringUntil('\n');
+            index_html = html_file.readString();  // html_file.readStringUntil('\n');
             html_file.close();
             Serial.println("HTML file loaded successfully");
-            Serial.printf("\n%s\n", html.c_str());
         }
         else
         {
@@ -61,18 +69,17 @@ void setup()
     }
     else
     {
-        Serial.println("HTML file not found");
+        Serial.println("index_html file not found");
     }
 
-    if (SPIFFS.exists(jsFilePath))
+    if (LittleFS.exists(jsFilePath))
     {
-        File js_file = SPIFFS.open(jsFilePath, "r");
+        File js_file = LittleFS.open(jsFilePath, "r");
         if (js_file)
         {
-            js = js_file.readString();  // js_file.readStringUntil('\n');
+            date_time_js = js_file.readString();  // js_file.readStringUntil('\n');
             js_file.close();
             Serial.println("JavaScript file loaded successfully");
-            Serial.printf("\n%s\n", js.c_str());
         }
         else
         {
@@ -84,25 +91,89 @@ void setup()
         Serial.println("JavaScript file not found");
     }
 
-    server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) {
-        Serial.println("Requesting page.html");
-        request->send(200, "text/javascript", js);
-        request->send(200, "text/html", html);
-    });
+    LittleFS.end();
 
-    // Handle location data sent from webpage
-    server.on("/location", HTTP_POST, [](AsyncWebServerRequest* request) {
-        if (request->hasParam("latitude", true) && request->hasParam("longitude", true))
+    server.on("/", HTTP_GET, []() {
+        Serial.println("Requesting index.html");
+        if (!LittleFS.begin())
         {
-            location = "Latitude: " + request->getParam("latitude")->value()
-                       + "\nLongitude: " + request->getParam("longitude")->value();
-            Serial.println(location);
-            request->send(200, "text/plain", "Location received!");
+            Serial.println("LittleFS Mount Failed");
+            return;
+        }
+        File file = LittleFS.open("/index.html", "r");
+        if (file)
+        {
+            server.send(200, "text/html", file.readString());
+            file.close();
         }
         else
         {
-            request->send(400, "text/plain", "Missing location data!");
+            server.send(404, "text/plain", "404 Not Found");
         }
+        LittleFS.end();
+    });
+
+    server.on("/dateTime.js", HTTP_GET, []() {
+        Serial.println("Requesting dateTime.js");
+        if (!LittleFS.begin())
+        {
+            Serial.println("LittleFS Mount Failed");
+            return;
+        }
+        File file = LittleFS.open("/dateTime.js", "r");
+        if (file)
+        {
+            server.send(200, "text/javascript", file.readString());
+            file.close();
+        }
+        else
+        {
+            server.send(404, "text/plain", "404 Not Found");
+        }
+        LittleFS.end();
+    });
+
+    server.on("/date-time", HTTP_POST, []() {
+        uint32_t server_now = millis();
+        if (!LittleFS.begin())
+        {
+            Serial.println("LittleFS Mount Failed");
+            return;
+        }
+        if (!server.hasArg("dateTime"))
+        {
+            server.send(400, "text/plain", "Missing date and time data!");
+            LittleFS.end();
+            return;
+        }
+        String   dateTime         = server.arg("dateTime");
+        uint32_t server_proc_time = millis() - server_now;
+        uint32_t network_time     = server_proc_time + server.arg("elapsedTime").toInt();
+
+        Serial.println("Received date and time: " + dateTime);
+        Serial.printf("Offset: %u, server_proc_time: %u, elapsed_time: %u\n",
+                      network_time,
+                      server_proc_time,
+                      network_time);
+        server.send(200, "text/plain", "Date and time received!");
+        LittleFS.end();
+    });
+
+    server.on("/submit", HTTP_POST, []() {
+        if (!LittleFS.begin())
+        {
+            Serial.println("LittleFS Mount Failed");
+            return;
+        }
+        if (!server.hasArg("dateTime"))
+        {
+            server.send(400, "text/plain", "Missing date and time data!");
+            LittleFS.end();
+            return;
+        }
+
+        server.send(200, "text/plain", "Date and time received!");
+        LittleFS.end();
     });
 
     server.begin();
@@ -111,6 +182,5 @@ void setup()
 
 void loop()
 {
-    Serial.println("still alive...");
-    delay(1000);
+    server.handleClient();  // Handle incoming client requests
 }
